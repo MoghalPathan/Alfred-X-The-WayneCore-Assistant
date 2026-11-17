@@ -1,140 +1,166 @@
 """
-AlfredX: Memory System
-SQLite-based persistent memory for facts, conversations, and tasks.
+AlfredX: Memory System v2.2 — pure JSON storage
+All user data (facts, conversations, tasks) is stored in human-readable
+JSON files on the user's own computer. No database, no server.
+Public API is identical to the old SQLite version.
 """
-import sqlite3
+import json
 import os
+import threading
 from datetime import datetime
 from config import DATA_DIR
 
+_MEMORY_FILE = os.path.join(DATA_DIR, "alfred_memory.json")
+_lock = threading.Lock()
+
+
+def _now():
+    return datetime.now().isoformat()
+
+
+def _load():
+    if not os.path.exists(_MEMORY_FILE):
+        return {"facts": [], "conversations": [], "tasks": [], "next_id": 1}
+    try:
+        with open(_MEMORY_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"[Memory] Corrupt memory file, starting fresh: {e}")
+        try:
+            os.replace(_MEMORY_FILE, _MEMORY_FILE + ".corrupt")
+        except Exception:
+            pass
+        return {"facts": [], "conversations": [], "tasks": [], "next_id": 1}
+    data.setdefault("facts", [])
+    data.setdefault("conversations", [])
+    data.setdefault("tasks", [])
+    data.setdefault("next_id", 1)
+    return data
+
+
+def _save(data):
+    tmp = _MEMORY_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, _MEMORY_FILE)  # atomic write: never leaves a half-saved file
+
 
 class Memory:
-    """Persistent memory -- remembers user facts, conversation history, and tasks."""
+    """Persistent memory — remembers user facts, conversations, and tasks in JSON."""
 
     def __init__(self):
-        self.db_path = os.path.join(DATA_DIR, "alfred_memory.db")
         os.makedirs(DATA_DIR, exist_ok=True)
-        self._init_db()
-
-    def _init_db(self):
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS facts (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    category TEXT NOT NULL,
-                    key TEXT NOT NULL,
-                    value TEXT NOT NULL,
-                    updated_at TEXT NOT NULL,
-                    UNIQUE(category, key)
-                )
-            """)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS conversations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    role TEXT NOT NULL,
-                    content TEXT NOT NULL,
-                    language TEXT DEFAULT 'en',
-                    timestamp TEXT NOT NULL
-                )
-            """)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS tasks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    description TEXT DEFAULT '',
-                    status TEXT DEFAULT 'pending',
-                    created_at TEXT NOT NULL,
-                    completed_at TEXT
-                )
-            """)
-            conn.commit()
-        print(f"[Memory] [OK] Database ready: {self.db_path}")
+        print(f"[Memory] [OK] JSON memory ready: {_MEMORY_FILE}")
 
     # --- Facts ---
     def remember(self, category, key, value):
-        """Store or update a fact."""
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO facts (category, key, value, updated_at) VALUES (?, ?, ?, ?)",
-                (category, key, value, datetime.now().isoformat())
-            )
-            conn.commit()
+        with _lock:
+            data = _load()
+            for fact in data["facts"]:
+                if fact["category"] == category and fact["key"] == key:
+                    fact["value"] = str(value)
+                    fact["updated_at"] = _now()
+                    break
+            else:
+                data["facts"].append({
+                    "category": category, "key": key, "value": str(value),
+                    "updated_at": _now(),
+                })
+            _save(data)
         print(f"[Memory] Saved {category}/{key} = {value}")
 
     def recall(self, category=None, key=None):
-        """Recall facts. Filter by category and/or key."""
-        with sqlite3.connect(self.db_path) as conn:
-            if category and key:
-                row = conn.execute(
-                    "SELECT value FROM facts WHERE category=? AND key=?", (category, key)
-                ).fetchone()
-                return row[0] if row else None
-            elif category:
-                rows = conn.execute(
-                    "SELECT key, value FROM facts WHERE category=?", (category,)
-                ).fetchall()
-                return {r[0]: r[1] for r in rows}
-            else:
-                rows = conn.execute("SELECT category, key, value FROM facts").fetchall()
-                return [{"category": r[0], "key": r[1], "value": r[2]} for r in rows]
+        with _lock:
+            data = _load()
+        if category and key:
+            for fact in data["facts"]:
+                if fact["category"] == category and fact["key"] == key:
+                    return fact["value"]
+            return None
+        elif category:
+            return {f["key"]: f["value"] for f in data["facts"] if f["category"] == category}
+        else:
+            return [
+                {"category": f["category"], "key": f["key"], "value": f["value"]}
+                for f in data["facts"]
+            ]
 
     def get_all_facts(self):
         return self.recall()
 
     def forget(self, category, key):
-        """Delete a fact."""
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute("DELETE FROM facts WHERE category=? AND key=?", (category, key))
-            conn.commit()
-        print(f"[Memory] Forgot: {category}/{key}")
+        with _lock:
+            data = _load()
+            before = len(data["facts"])
+            data["facts"] = [
+                f for f in data["facts"]
+                if not (f["category"] == category and f["key"] == key)
+            ]
+            removed = before - len(data["facts"])
+            _save(data)
+        if removed:
+            print(f"[Memory] Forgot: {category}/{key}")
 
     # --- Conversations ---
     def log_message(self, role, content, language="en"):
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                "INSERT INTO conversations (role, content, language, timestamp) VALUES (?, ?, ?, ?)",
-                (role, content, language, datetime.now().isoformat())
-            )
-            conn.commit()
+        with _lock:
+            data = _load()
+            data["conversations"].append({
+                "role": role, "content": content,
+                "language": language, "timestamp": _now(),
+            })
+            if len(data["conversations"]) > 500:
+                data["conversations"] = data["conversations"][-500:]
+            _save(data)
 
     def get_recent_conversations(self, limit=10):
-        with sqlite3.connect(self.db_path) as conn:
-            rows = conn.execute(
-                "SELECT role, content, timestamp FROM conversations ORDER BY id DESC LIMIT ?",
-                (limit,)
-            ).fetchall()
-        return [{"role": r[0], "content": r[1], "timestamp": r[2]} for r in reversed(rows)]
+        with _lock:
+            data = _load()
+        return [
+            {"role": c["role"], "content": c["content"], "timestamp": c["timestamp"]}
+            for c in data["conversations"][-limit:]
+        ]
 
     def search_conversations(self, query):
-        with sqlite3.connect(self.db_path) as conn:
-            rows = conn.execute(
-                "SELECT role, content, timestamp FROM conversations WHERE content LIKE ? ORDER BY id DESC LIMIT 20",
-                (f"%{query}%",)
-            ).fetchall()
-        return [{"role": r[0], "content": r[1], "timestamp": r[2]} for r in rows]
+        with _lock:
+            data = _load()
+        q = query.lower()
+        return [
+            {"role": c["role"], "content": c["content"], "timestamp": c["timestamp"]}
+            for c in reversed(data["conversations"])
+            if q in c["content"].lower()
+        ][:20]
 
     # --- Tasks ---
     def add_task(self, title, description=""):
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                "INSERT INTO tasks (title, description, status, created_at) VALUES (?, ?, 'pending', ?)",
-                (title, description, datetime.now().isoformat())
-            )
-            conn.commit()
+        with _lock:
+            data = _load()
+            task_id = data["next_id"]
+            data["next_id"] += 1
+            data["tasks"].append({
+                "id": task_id, "title": title, "description": description,
+                "status": "pending", "created_at": _now(), "completed_at": None,
+            })
+            _save(data)
         print(f"[Memory] Task added: {title}")
+        return task_id
 
     def complete_task(self, task_id):
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                "UPDATE tasks SET status='completed', completed_at=? WHERE id=?",
-                (datetime.now().isoformat(), task_id)
-            )
-            conn.commit()
+        with _lock:
+            data = _load()
+            for task in data["tasks"]:
+                if task["id"] == task_id:
+                    task["status"] = "completed"
+                    task["completed_at"] = _now()
+                    break
+            _save(data)
 
     def get_tasks(self, status="pending"):
-        with sqlite3.connect(self.db_path) as conn:
-            rows = conn.execute(
-                "SELECT id, title, description, status, created_at FROM tasks WHERE status=? ORDER BY id DESC",
-                (status,)
-            ).fetchall()
-        return [{"id": r[0], "title": r[1], "description": r[2], "status": r[3], "created": r[4]} for r in rows]
+        with _lock:
+            data = _load()
+        return [
+            {"id": t["id"], "title": t["title"], "description": t["description"],
+             "status": t["status"], "created": t["created_at"]}
+            for t in reversed(data["tasks"])
+            if t["status"] == status
+        ]

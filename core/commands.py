@@ -29,12 +29,13 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 from pathlib import Path
-from config import WEATHER_API_KEY, NEWS_API_KEY, GMAIL_ADDRESS, GMAIL_APP_PASSWORD, \
-                   SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI
+from config import (WEATHER_API_KEY, NEWS_API_KEY, GMAIL_ADDRESS, GMAIL_APP_PASSWORD,
+                    SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI,
+                    USER_DATA_DIR)
 
 # ── Poetry ──
-POETRY_FILE = Path("data/naved_poetry.json")
-POETRY_STATE = Path("data/poetry_state.json")
+POETRY_FILE = Path(USER_DATA_DIR) / "naved_poetry.json"
+POETRY_STATE = Path(USER_DATA_DIR) / "poetry_state.json"
 
 
 

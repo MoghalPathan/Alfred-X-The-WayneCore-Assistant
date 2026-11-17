@@ -22,6 +22,12 @@ from dotenv import load_dotenv
 
 def _get_env_path():
     if getattr(sys, "frozen", False):
+        # The setup wizard saves .env next to the exe, so check there first,
+        # then fall back to %APPDATA%\AlfredX\.env.
+        exe_dir = os.path.dirname(sys.executable)
+        next_to_exe = os.path.join(exe_dir, ".env")
+        if os.path.exists(next_to_exe):
+            return next_to_exe
         app_data = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "AlfredX")
         os.makedirs(app_data, exist_ok=True)
         return os.path.join(app_data, ".env")

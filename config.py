@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 import os
+import sys
+
 
 load_dotenv()
 
@@ -22,6 +24,7 @@ load_dotenv()
 AI_NAME = "AlfredX"
 AI_TITLE = "The Waynecore Assistant"
 AI_VERSION = "2.1.0"
+
 
 # ─── WINTER SOLDIER PROTOCOL ──────────────────────────
 ACTIVATION_WORDS = [
@@ -75,7 +78,7 @@ DEFAULT_LANGUAGE = "en"
 
 # ─── AI ENGINE ─────────────────────────────────────────
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 MAX_TOKENS = 1024
 TEMPERATURE = 0.7
 
@@ -112,9 +115,16 @@ COLORS = {
 
 # ─── PATHS ─────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-KNOWLEDGE_DIR = os.path.join(DATA_DIR, "knowledge")
+# All user data goes to %APPDATA%\AlfredX\data in a packaged build (the
+# app folder is read-only there); dev builds keep using the project's data/.
+if getattr(sys, "frozen", False):
+ USER_DATA_DIR = os.path.join(os.environ.get("APPDATA",
+os.path.expanduser("~")), "AlfredX", "data")
+else:
+ USER_DATA_DIR = os.path.join(BASE_DIR, "data")
+DATA_DIR = USER_DATA_DIR # backwards-compatible alias
+KNOWLEDGE_DIR = os.path.join(USER_DATA_DIR, "knowledge")
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
-
 os.makedirs(KNOWLEDGE_DIR, exist_ok=True)
 os.makedirs(ASSETS_DIR, exist_ok=True)
+

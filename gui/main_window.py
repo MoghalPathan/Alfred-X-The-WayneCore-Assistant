@@ -38,6 +38,10 @@ DARK="#000000";DARK_BLUE="#0a0a1a";PANEL_BG="rgba(5,10,25,217)"
 FM="Segoe UI";FC="Consolas";FH="Segoe UI"
 SETTINGS_FILE=os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","data","alfredx_settings.json")
 
+import sys as _sys
+if getattr(_sys,"frozen",False):
+    SETTINGS_FILE=os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")),"AlfredX","data","alfredx_settings.json")
+
 class _SignalBridge(QObject):
     ai_response=pyqtSignal(str);voice_heard=pyqtSignal(str)
     voice_error=pyqtSignal(str);tts_done=pyqtSignal()
