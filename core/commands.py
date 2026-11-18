@@ -500,8 +500,8 @@ class CommandHandler:
             except Exception as e:
                 print(f"[YT Download] Error: {e}")
 
-            threading.Thread(target=_download, daemon=True).start()
-            return True, f"Downloading from YouTube, Master.\nSaving to: {downloads}"
+        threading.Thread(target=_download, daemon=True).start()
+        return True, f"Downloading from YouTube, Master.\nSaving to: {downloads}"
     
     # ===================== OPEN WEBSITE =====================
     def _check_open_website(self, cmd):

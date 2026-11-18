@@ -104,6 +104,7 @@ class TTSEngine:
                 tmp.close()
 
                 # Generate audio with retry + asyncio timeout
+                loop = None
                 for attempt in range(2):
                     try:
                         loop = asyncio.new_event_loop()

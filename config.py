@@ -1,22 +1,8 @@
-from dotenv import load_dotenv
-import os
-import sys
-
-
-load_dotenv()
-
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", "")
-NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
-GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS", "")
-GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
-SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "")
-SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "")
-SPOTIFY_REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "https://localhost:8888/callback")
-
 """
 AlfredX: The Waynecore Assistant — Configuration
 """
 import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -118,10 +104,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # All user data goes to %APPDATA%\AlfredX\data in a packaged build (the
 # app folder is read-only there); dev builds keep using the project's data/.
 if getattr(sys, "frozen", False):
- USER_DATA_DIR = os.path.join(os.environ.get("APPDATA",
-os.path.expanduser("~")), "AlfredX", "data")
+    USER_DATA_DIR = os.path.join(
+        os.environ.get("APPDATA", os.path.expanduser("~")), "AlfredX", "data"
+    )
 else:
- USER_DATA_DIR = os.path.join(BASE_DIR, "data")
+    USER_DATA_DIR = os.path.join(BASE_DIR, "data")
 DATA_DIR = USER_DATA_DIR # backwards-compatible alias
 KNOWLEDGE_DIR = os.path.join(USER_DATA_DIR, "knowledge")
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
