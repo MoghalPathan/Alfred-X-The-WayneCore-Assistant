@@ -13,27 +13,14 @@ import os
 # STEP 2 — Setup wizard check (before ANY other imports)
 #           This ensures .env exists before config.py loads
 # ═══════════════════════════════════════════════════════
-from setup_wizard import env_exists, run_wizard, open_settings
+from setup_wizard import env_exists, run_wizard, open_settings, get_env_path
 if not env_exists():
     run_wizard()
 
 # Reload .env into os.environ RIGHT NOW so config.py gets real values
 from dotenv import load_dotenv
 
-def _get_env_path():
-    if getattr(sys, "frozen", False):
-        # The setup wizard saves .env next to the exe, so check there first,
-        # then fall back to %APPDATA%\AlfredX\.env.
-        exe_dir = os.path.dirname(sys.executable)
-        next_to_exe = os.path.join(exe_dir, ".env")
-        if os.path.exists(next_to_exe):
-            return next_to_exe
-        app_data = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "AlfredX")
-        os.makedirs(app_data, exist_ok=True)
-        return os.path.join(app_data, ".env")
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
-
-load_dotenv(dotenv_path=_get_env_path(), override=True)
+load_dotenv(dotenv_path=get_env_path(), override=True)
 
 # ═══════════════════════════════════════════════════════
 # STEP 3 — Qt environment settings
@@ -103,7 +90,7 @@ class AlfredXApp(QMainWindow):
             f"<b>AlfredX — The Waynecore Assistant</b><br>"
             f"Version 2.1.0<br><br>"
             f"<i>\"I shall attend to it, Master.\"</i><br><br>"
-            f"Config: {_get_env_path()}"
+            f"Config: {get_env_path()}"
         )
         msg.setStyleSheet("background:#0d1117; color:#e0e6ed;")
         msg.exec_()

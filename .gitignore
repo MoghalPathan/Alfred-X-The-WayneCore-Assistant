@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 .env
 data/alfred_memory.db
+data/alfred_memory.json
+data/alfredx_history.db
+data/alfredx_history.json
 assets/gotham_bg.jpg
 dist/
 build/
@@ -10,9 +13,6 @@ build/
 ma.py
 PyWhatKit_DB.txt
 test.html
-setup_wizard.py
-AlfredX.spec
-data/alfredx_history.db
 data/music/Tum Hi Ho.mp3
 data/music/Tum Nazar Mein Raho.mp3
 data/music/Zindagi Se Churake.mp3
