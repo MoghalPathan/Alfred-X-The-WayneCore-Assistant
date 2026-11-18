@@ -228,10 +228,28 @@ function animVis(on) {
 // ═══════════════════════════════════════════════════════
 // WEBSOCKET
 // ═══════════════════════════════════════════════════════
+let lastHost = '';
 function connect(h) {
   if (ws) { try { ws.close(); } catch(e){} }
-  if (h) host = h;
-  try { ws = new WebSocket(`ws://${host}:${PORT}/ws`); }
+  if (h) lastHost = h;
+  const isHttps = window.location.protocol === 'https:';
+  const proto = isHttps ? 'wss:' : 'ws:';
+  let wsUrl;
+
+  const targetHost = h || lastHost;
+  if (targetHost) {
+    const hasPort = targetHost.includes(':');
+    wsUrl = `${proto}//${targetHost}${hasPort ? '' : ':' + PORT}/ws`;
+  } else {
+    // If opened via web URL (domain/IP), use window.location.host directly
+    if (window.location.host) {
+      wsUrl = `${proto}//${window.location.host}/ws`;
+    } else {
+      wsUrl = `ws://127.0.0.1:${PORT}/ws`;
+    }
+  }
+
+  try { ws = new WebSocket(wsUrl); }
   catch(e) { setOnline(false); return; }
 
   ws.onopen  = () => { setOnline(true); };

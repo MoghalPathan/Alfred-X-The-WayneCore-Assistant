@@ -80,6 +80,11 @@ NEWS_API_KEY = os.environ.get("NEWS_API_KEY", "")
 GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS", "")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 
+# ─── SPOTIFY ───────────────────────────────────────
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "")
+SPOTIFY_REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "https://localhost:8888/callback")
+
 # ─── GUI THEME ─────────────────────────────────────────
 COLORS = {
     "bg_primary": "#0a0a0f",

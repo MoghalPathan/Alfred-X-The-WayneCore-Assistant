@@ -34,7 +34,7 @@ AlfredX is an AI desktop assistant for Windows, built with Python and PyQt5. It 
 | Custom knowledge base | Complete |
 | Timers and reminders | Complete |
 | To-do list | Complete |
-| Mobile companion control | In progress |
+| Mobile companion control | Complete |
 
 ### Authentication (Winter Soldier Protocol)
 
@@ -74,9 +74,13 @@ Volume up, down and mute; play, pause and skip tracks; Spotify integration.
 
 Cyan/teal HUD layout with a rotating AI core animation, circular system gauges, a voice waveform visualizer and a real-time activity log.
 
-### Mobile Control (In Progress)
+### Mobile Companion (Remote Web Control)
 
-Groundwork for a companion mobile interface built with FastAPI and WebSocket, styled to match the desktop theme. This feature is not yet fully functional.
+A companion web interface styled with the Waynecore HUD theme, powered by FastAPI and WebSockets:
+- **Real-time Bidirectional WebSocket:** Supports voice and text input from any smartphone with real-time AI streaming and audio response.
+- **Local Network Access:** Open `http://<your-PC-IP>:8000` on any device connected to the same Wi-Fi network.
+- **Anywhere / Global Remote Access:** Expose the embedded server with full HTTPS/WSS (via Ngrok or Cloudflare Tunnel) to enable secure mobile voice access and microphone support over cellular data (4G/5G).
+- **Home Screen App Mode:** Can be added to the mobile home screen as a standalone web app.
 
 ### Additional Features
 
@@ -154,6 +158,15 @@ python main.py
 
 1. **Voice activation:** speak the 10 activation words in order.
 2. **Text password:** enter `MEZEYAT`.
+
+### Mobile Companion Access
+
+1. **Local Wi-Fi:** Open `http://<YOUR_PC_IP>:8000` in your phone browser.
+2. **Anywhere via Tunnel (Ngrok / Cloudflare):**
+   ```bash
+   ngrok http 127.0.0.1:8000
+   ```
+   Open the generated HTTPS URL on your phone to talk to AlfredX from anywhere.
 
 ---
 
