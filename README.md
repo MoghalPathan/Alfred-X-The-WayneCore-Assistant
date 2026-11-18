@@ -90,14 +90,24 @@ System tray with background running, global hotkey (`Ctrl+Shift+A`), wake word d
 
 ## Installation
 
-### Prerequisites
+### Option 1: Standalone Windows App (No Python Required)
+
+1. Download `AlfredX_v2.1_Windows.zip` from [GitHub Releases](https://github.com/MoghalPathan/Alfred-X/releases).
+2. Extract the folder and double-click **`AlfredX.exe`**.
+3. On first launch, the **Setup Wizard** will automatically pop up to guide you through entering your free Groq API key and optional credentials.
+
+---
+
+### Option 2: Run from Source (Python)
+
+#### Prerequisites
 
 - Python 3.10 or later
 - Windows 10 or 11
 - Microphone
 - Internet connection (required for AI features)
 
-### 1. Clone the repository
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/MoghalPathan/Alfred-X.git
