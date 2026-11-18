@@ -140,6 +140,11 @@ NEWS_API_KEY=your_news_key_here
 # Optional: Gmail (must be an App Password, not your normal password)
 GMAIL_ADDRESS=your.email@gmail.com
 GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
+
+# Optional: Spotify integration
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_REDIRECT_URI=https://localhost:8888/callback
 ```
 
 > **Note:** Never commit your real `.env` file. It is listed in `.gitignore`; only `.env.example`, which contains placeholder values, is pushed to GitHub.
@@ -306,10 +311,10 @@ Hava durumu
 | PyQt5 | Desktop GUI framework |
 | SpeechRecognition | Voice input (Google API, free) |
 | Edge-TTS | Voice output (Microsoft, free, no key needed) |
-| Groq API | LLM backend (Llama 3, free tier) |
-| FastAPI + WebSocket | Mobile companion control (in progress) |
+| Groq API / Ollama | LLM backend (Groq cloud & Ollama local fallback) |
+| FastAPI + WebSocket | Mobile companion remote control |
 | psutil, pycaw | System and audio monitoring |
-| SQLite | Persistent memory and conversation storage |
+| JSON / SQLite | Persistent memory and conversation storage |
 | PyInstaller | Windows executable packaging |
 | OpenCV, spotipy, pywhatkit, yt-dlp | Media and automation extras |
 
@@ -334,14 +339,16 @@ AlfredX/
 │   ├── chat_history.py         # Conversation history
 │   ├── commands.py             # Command parsing and routing
 │   ├── music_service.py        # Media and Spotify control
-│   └── embedded_server.py      # Mobile control backend (in progress)
+│   └── embedded_server.py      # Mobile companion server (FastAPI + WebSocket)
 ├── gui/
 │   ├── login_screen.py         # Login UI
 │   ├── main_window.py          # Main HUD interface
 │   ├── styles.py               # QSS stylesheet
 │   └── widgets/                # AI orb, gauges, waveform, etc.
 └── data/
-    ├── alfred_memory.db        # AI conversation memory (gitignored)
+    ├── mobile_ui.html          # Mobile companion web interface
+    ├── alfred_memory.json      # Persistent AI memory (gitignored)
+    ├── alfredx_history.json    # Conversation history (gitignored)
     ├── codex/Alfred_Codex.pdf  # Knowledge base source document
     ├── knowledge/              # Custom knowledge JSON files
     └── music/                  # Local music files
