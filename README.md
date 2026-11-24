@@ -389,6 +389,6 @@ Built with teammates Bhagat, Mansi and Sayali.
 
 ## Acknowledgments
 
-- JARVIS from Iron Man
+- JARVIS from Marvel
 - Alfred Pennyworth from DC Comics
 - Winter Soldier activation sequence from Marvel
