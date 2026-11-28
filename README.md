@@ -1,6 +1,6 @@
 # AlfredX
 
-![Python application](https://github.com/MoghalPathan/Alfred-X/actions/workflows/python-app.yml/badge.svg)
+![Python application](https://github.com/MoghalPathan/Alfred-X-The-WayneCore-Assistant/actions/workflows/python-app.yml/badge.svg)
 
 AlfredX is an AI desktop assistant for Windows, built with Python and PyQt5. It combines a HUD-style interface, voice conversation, system control and bilingual (English/Turkish) support. The assistant is inspired by Alfred Pennyworth (DC Comics) and JARVIS (Marvel).
 
@@ -93,7 +93,7 @@ System tray with background running, global hotkey (`Ctrl+Shift+A`), wake word d
 
 ### Option 1: Standalone Windows App (No Python Required)
 
-1. Download `AlfredX_v2.1_Windows.zip` from [GitHub Releases](https://github.com/MoghalPathan/Alfred-X/releases).
+1. Download `AlfredX_v2.1_Windows.zip` from [GitHub Releases](https://github.com/MoghalPathan/Alfred-X-The-WayneCore-Assistant/releases).
 2. Extract the folder and double-click **`AlfredX.exe`**.
 3. On first launch, the **Setup Wizard** will automatically pop up to guide you through entering your free Groq API key and optional credentials.
 
@@ -111,8 +111,8 @@ System tray with background running, global hotkey (`Ctrl+Shift+A`), wake word d
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/MoghalPathan/Alfred-X.git
-cd Alfred-X
+git clone https://github.com/MoghalPathan/Alfred-X-The-WayneCore-Assistant.git
+cd Alfred-X-The-WayneCore-Assistant
 ```
 
 ### 2. Create a virtual environment
