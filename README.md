@@ -14,6 +14,7 @@ AlfredX is an AI desktop assistant for Windows, built with Python and PyQt5. It 
 - [Project Structure](#project-structure)
 - [Screenshots](#screenshots)
 - [Author](#author)
+- [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ---
@@ -336,11 +337,15 @@ Hava durumu
 AlfredX/
 ├── main.py                     # Entry point
 ├── config.py                   # Configuration
+├── setup_wizard.py             # First-time API key setup GUI
+├── AlfredX.spec                # PyInstaller build configuration
+├── Launch_AlfredX.bat          # 1-click Windows & tunnel launcher
 ├── requirements.txt            # Dependencies
 ├── .env.example                # API key template (safe to commit)
+├── LICENSE                     # MIT License
 ├── core/
-│   ├── ai_engine.py            # Groq LLM integration
-│   ├── tts_engine.py / tts.py  # Edge-TTS voice output
+│   ├── ai_engine.py            # Groq LLM & Ollama integration
+│   ├── tts_engine.py           # Edge-TTS voice output
 │   ├── speech_engine.py        # Speech recognition
 │   ├── wake_word.py            # "Alfred" wake word detection
 │   ├── global_hotkey.py        # Ctrl+Shift+A hotkey
@@ -353,15 +358,15 @@ AlfredX/
 ├── gui/
 │   ├── login_screen.py         # Login UI
 │   ├── main_window.py          # Main HUD interface
-│   ├── styles.py               # QSS stylesheet
-│   └── widgets/                # AI orb, gauges, waveform, etc.
+│   └── styles.py               # QSS stylesheet
 └── data/
     ├── mobile_ui.html          # Mobile companion web interface
+    ├── naved_poetry.json       # Built-in poetry collection
     ├── alfred_memory.json      # Persistent AI memory (gitignored)
     ├── alfredx_history.json    # Conversation history (gitignored)
-    ├── codex/Alfred_Codex.pdf  # Knowledge base source document
+    ├── codex/Alfred_Codex.pdf  # Knowledge base source document (gitignored)
     ├── knowledge/              # Custom knowledge JSON files
-    └── music/                  # Local music files
+    └── music/                  # Local music files (gitignored)
 ```
 
 ---
@@ -386,6 +391,10 @@ AlfredX/
 - GitHub: [@MoghalPathan](https://github.com/MoghalPathan)
 
 Built with teammates Bhagat, Mansi and Sayali.
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

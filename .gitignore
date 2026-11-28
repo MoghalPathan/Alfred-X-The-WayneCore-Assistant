@@ -2,18 +2,16 @@ venv/
 __pycache__/
 *.pyc
 .env
+.spotify_cache
+*.log
+PyWhatKit_DB.txt
 data/alfred_memory.db
 data/alfred_memory.json
 data/alfredx_history.db
 data/alfredx_history.json
+data/music/*.mp3
+data/codex/Alfred_Codex.pdf
 assets/gotham_bg.jpg
 dist/
 build/
 *.zip
-ma.py
-PyWhatKit_DB.txt
-test.html
-data/music/Tum Hi Ho.mp3
-data/music/Tum Nazar Mein Raho.mp3
-data/music/Zindagi Se Churake.mp3
-data/codex/Alfred_Codex.pdf
